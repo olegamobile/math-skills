@@ -17,25 +17,30 @@ func main() {
 
 }
 
-func average(nums []float64) float64 {
-	if len(nums) == 0 {
+func average(numbers []float64) float64 {
+	// x̄ = (1 / n) * Σ xi
+
+	if len(numbers) == 0 {
 		return 0
 	}
 	sum := 0.0
-	for _, v := range nums {
+	for _, v := range numbers {
 		sum += v
 	}
-	return sum / float64(len(nums))
+	return sum / float64(len(numbers))
 }
 
-func median(nums []float64) float64 {
-	n := len(nums)
+func median(numbers []float64) float64 {
+	// Me = x((n + 1) / 2) for odd aount of numbers
+	// Me = (x(n / 2) + x(n / 2 + 1)) / 2 for even amount of numbers
+
+	n := len(numbers)
 	if n == 0 {
 		return 0
 	}
 	sorted := make([]float64, n)
-	copy(sorted, nums)
-	// Simple insertion sort
+	copy(sorted, numbers)
+	
 	for i := 1; i < n; i++ {
 		key := sorted[i]
 		j := i - 1
@@ -51,33 +56,28 @@ func median(nums []float64) float64 {
 	return (sorted[n/2-1] + sorted[n/2]) / 2
 }
 
-func variance(nums []float64) float64 {
-	if len(nums) == 0 {
+func variance(numbers []float64) float64 {
+	// σ^2 = (1 / N) * Σ (xi - μ)^2
+
+	if len(numbers) == 0 {
 		return 0
 	}
-	avg := average(nums)
+	avg := average(numbers)
 	sum := 0.0
-	for _, v := range nums {
+	for _, v := range numbers {
 		diff := v - avg
 		sum += diff * diff
 	}
-	return sum / float64(len(nums))
+	return sum / float64(len(numbers))
 }
 
-func std_dev(nums []float64) float64 {
-	return sqrt(variance(nums))
+func std_dev(numbers []float64) float64 {
+	// σ = sqrt( (1 / N) * Σ (xi - μ)^2 )
+
+	return math.Sqrt(variance(numbers))
 }
 
-func sqrt(x float64) float64 {
-	z := x
-	for i := 0; i < 10; i++ {
-		z -= (z*z - x) / (2 * z)
-	}
-	return z
-}
 
-// read_data reads float64 numbers from a file whose name is given as the first command-line argument.
-// It returns a slice of float64 values.
 func read_data() []float64 {
 	if len(os.Args) < 2 {
 		panic("No input file provided")
@@ -88,7 +88,7 @@ func read_data() []float64 {
 	}
 	defer file.Close()
 
-	var nums []float64
+	var numbers []float64
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -96,10 +96,10 @@ func read_data() []float64 {
 		if err != nil {
 			panic(fmt.Sprintf("Invalid data in file: %v", err))
 		}
-		nums = append(nums, val)
+		numbers = append(numbers, val)
 	}
-	if len(nums) == 0 {
+	if len(numbers) == 0 {
 		panic("No valid data found in file")
 	}
-	return nums
+	return numbers
 }
